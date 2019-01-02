@@ -17,11 +17,11 @@ var (
 )
 
 type BigImageCard struct {
-	Type        string `json:"type"`
-	ImageID     string `json:"image_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Button      Button `json:"button"`
+	Type        CardType `json:"type"`
+	ImageID     string   `json:"image_id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Button      Button   `json:"button"`
 }
 
 func (c BigImageCard) CardType() CardType {
@@ -29,7 +29,7 @@ func (c BigImageCard) CardType() CardType {
 }
 
 type ItemsListCard struct {
-	Type   string     `json:"type"`
+	Type   CardType   `json:"type"`
 	Header CardHeader `json:"header"`
 	Items  []CardItem `json:"items"`
 	Footer CardFooter `json:"footer"`
