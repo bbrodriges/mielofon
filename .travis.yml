@@ -4,7 +4,7 @@ before_install:
   - go get github.com/mattn/goveralls
 
 script:
-  - go test -coverprofile=mielofon.cover .
+  - go test -coverprofile=mielofon.cover ./...
   - goveralls -coverprofile=mielofon.cover -service=travis-ci
 
 go:
