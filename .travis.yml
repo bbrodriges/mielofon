@@ -8,6 +8,5 @@ script:
   - goveralls -coverprofile=mielofon.cover -service=travis-ci
 
 go:
-  - "1.9"
   - "1.10"
   - "1.11"
