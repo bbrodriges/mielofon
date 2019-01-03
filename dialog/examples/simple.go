@@ -2,46 +2,26 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
-
 	"github.com/bbrodriges/mielofon"
+	"net/http"
 )
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadAll(r.Body)
-		if err != nil || len(b) == 0 {
+		input, output, err := mielofon.GetDialogPair(r.Body)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		var input mielofon.Input
-		if err := json.Unmarshal(b, &input); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		var keywordFound bool
-		for _, token := range input.Request.Nlu.Tokens {
-			if token == "привет" {
-				keywordFound = true
-			}
-		}
-
-		var output mielofon.Output
-		output.Version = input.Version
-		output.Session = input.Session
 		output.Response.Text = "Непонятно!"
-
-		if keywordFound {
+		if input.HasKeyword("привет") {
 			output.Response.Text = "Привет!"
 			output.Response.EndSession = true
 		}
-
 		output.Response.Tts = output.Response.Text
 
-		b, err = json.Marshal(output)
+		b, err := json.Marshal(output)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -57,5 +37,8 @@ func main() {
 		return
 	})
 
-	http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(":80", nil)
+	if err != nil {
+		panic(err)
+	}
 }

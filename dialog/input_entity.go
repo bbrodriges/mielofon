@@ -1,4 +1,4 @@
-package mielofon
+package dialog
 
 import (
 	"encoding/json"
@@ -7,21 +7,21 @@ import (
 )
 
 type Entity struct {
-	Tokens Tokens       `json:"tokens"`
-	Type   EntityType   `json:"type"`
-	Value  YandexEntity `json:"value"`
+	Tokens Tokens       `json:"tokens,omitempty"`
+	Type   EntityType   `json:"type,omitempty"`
+	Value  YandexEntity `json:"value,omitempty"`
 }
 
 type Tokens struct {
-	Start int `json:"start"`
-	End   int `json:"end"`
+	Start int `json:"start,omitempty"`
+	End   int `json:"end,omitempty"`
 }
 
 func (e *Entity) UnmarshalJSON(b []byte) error {
 	var rawEntity = struct {
-		Tokens Tokens          `json:"tokens"`
-		Type   EntityType      `json:"type"`
-		Value  json.RawMessage `json:"value"`
+		Tokens Tokens          `json:"tokens,omitempty"`
+		Type   EntityType      `json:"type,omitempty"`
+		Value  json.RawMessage `json:"value,omitempty"`
 	}{}
 
 	if err := json.Unmarshal(b, &rawEntity); err != nil {
@@ -84,10 +84,10 @@ var (
 
 // YandexGeo is a value of YANDEX.GEO entity type
 type YandexGeo struct {
-	Country     string `json:"country"`
-	City        string `json:"city"`
-	Street      string `json:"street"`
-	HouseNumber string `json:"house_number"`
+	Country     string `json:"country,omitempty"`
+	City        string `json:"city,omitempty"`
+	Street      string `json:"street,omitempty"`
+	HouseNumber string `json:"house_number,omitempty"`
 }
 
 func (e YandexGeo) Type() EntityType {
@@ -96,9 +96,9 @@ func (e YandexGeo) Type() EntityType {
 
 // YandexFIO is a value of YANDEX.FIO entity type
 type YandexFIO struct {
-	FirstName      string `json:"first_name"`
-	PatronymicName string `json:"patronymic_name"`
-	LastName       string `json:"last_name"`
+	FirstName      string `json:"first_name,omitempty"`
+	PatronymicName string `json:"patronymic_name,omitempty"`
+	LastName       string `json:"last_name,omitempty"`
 }
 
 func (e YandexFIO) Type() EntityType {
@@ -114,16 +114,16 @@ func (e YandexNumber) Type() EntityType {
 
 // YandexDatetime is a value of YANDEX.DATETIME entity type
 type YandexDatetime struct {
-	Year             int  `json:"year"`
-	YearIsRelative   bool `json:"year_is_relative"`
-	Month            int  `json:"month"`
-	MonthIsRelative  bool `json:"month_is_relative"`
-	Day              int  `json:"day"`
-	DayIsRelative    bool `json:"day_is_relative"`
-	Hour             int  `json:"hour"`
-	HourIsRelative   bool `json:"hour_is_relative"`
-	Minute           int  `json:"minute"`
-	MinuteIsRelative bool `json:"minute_is_relative"`
+	Year             int  `json:"year,omitempty"`
+	YearIsRelative   bool `json:"year_is_relative,omitempty"`
+	Month            int  `json:"month,omitempty"`
+	MonthIsRelative  bool `json:"month_is_relative,omitempty"`
+	Day              int  `json:"day,omitempty"`
+	DayIsRelative    bool `json:"day_is_relative,omitempty"`
+	Hour             int  `json:"hour,omitempty"`
+	HourIsRelative   bool `json:"hour_is_relative,omitempty"`
+	Minute           int  `json:"minute,omitempty"`
+	MinuteIsRelative bool `json:"minute_is_relative,omitempty"`
 }
 
 func (e YandexDatetime) Type() EntityType {

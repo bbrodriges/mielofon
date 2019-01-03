@@ -1,0 +1,13 @@
+language: go
+
+before_install:
+  - go get github.com/mattn/goveralls
+
+script:
+  - go test -coverprofile=mielofon.cover .
+  - goveralls -coverprofile=mielofon.cover -service=travis-ci
+
+go:
+  - 1.9
+  - 1.10
+  - 1.11

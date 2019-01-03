@@ -1,4 +1,4 @@
-package mielofon
+package dialog
 
 import (
 	"encoding/json"
@@ -175,6 +175,8 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, 1984, e.GetTime(time.Local).Year())
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -188,6 +190,8 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -201,6 +205,8 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
 				assert.Equal(t, time.Month(3), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -214,6 +220,8 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -227,6 +235,8 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, 4, e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -240,6 +250,8 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -255,6 +267,7 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
 				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -269,6 +282,38 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
 				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
+			},
+		},
+		{
+			"what_happened_at_26th_minute",
+			YandexDatetime{
+				Minute:           26,
+				MinuteIsRelative: false,
+			},
+			func(t *testing.T, e YandexDatetime) {
+				now := time.Now()
+				expect := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), 26, now.Second(), now.Nanosecond(), now.Location())
+				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
+				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
+				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
+			},
+		},
+		{
+			"what_happened_15_minutes_ago",
+			YandexDatetime{
+				Minute:           -15,
+				MinuteIsRelative: true,
+			},
+			func(t *testing.T, e YandexDatetime) {
+				expect := time.Now().Add(-15 * time.Minute)
+				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
+				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
+				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
+				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 		{
@@ -285,12 +330,13 @@ func TestYandexDatetimeGetTime(t *testing.T) {
 			},
 			func(t *testing.T, e YandexDatetime) {
 				expect := time.Now().AddDate(-2, 0, 0)
-				expect = time.Date(expect.Year(), time.July, 4, 6, 0, 0, 0, expect.Location())
+				expect = time.Date(expect.Year(), time.July, 4, 6, expect.Minute(), 0, 0, expect.Location())
 
 				assert.Equal(t, expect.Year(), e.GetTime(time.Local).Year())
 				assert.Equal(t, expect.Month(), e.GetTime(time.Local).Month())
 				assert.Equal(t, expect.Day(), e.GetTime(time.Local).Day())
 				assert.Equal(t, expect.Hour(), e.GetTime(time.Local).Hour())
+				assert.Equal(t, expect.Minute(), e.GetTime(time.Local).Minute())
 			},
 		},
 	}
