@@ -2,7 +2,6 @@ package session
 
 import (
 	"errors"
-	"time"
 )
 
 var (
@@ -26,14 +25,3 @@ type StoreSeeker interface {
 }
 
 type VisitFunc func(id string, sess interface{}) bool
-
-var (
-	ErrExpired = errors.New("session expired")
-)
-
-// TTLSession interface describes session object
-// with lifetime
-type TTLSession interface {
-	SetTTL(time.Time) error
-	Expired() bool
-}

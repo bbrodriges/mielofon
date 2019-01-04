@@ -9,10 +9,47 @@ import (
 
 func TestUnmarshalEntity(t *testing.T) {
 	testCases := []struct {
-		name   string
-		raw    []byte
-		expect Entity
+		name      string
+		raw       []byte
+		expect    Entity
+		expectErr bool
 	}{
+		{
+			name:      "bad_json",
+			raw:       []byte(`""`),
+			expect:    Entity{},
+			expectErr: true,
+		},
+		{
+			name:      "bad_" + string(TypeYandexNumber),
+			raw:       []byte(`{"tokens":{"start":5,"end":6},"type":"YANDEX.NUMBER","value":[]}`),
+			expect:    Entity{},
+			expectErr: true,
+		},
+		{
+			name:      "bad_" + string(TypeYandexGeo),
+			raw:       []byte(`{"tokens":{"start":5,"end":6},"type":"YANDEX.GEO","value":[]}`),
+			expect:    Entity{},
+			expectErr: true,
+		},
+		{
+			name:      "bad_" + string(TypeYandexFIO),
+			raw:       []byte(`{"tokens":{"start":5,"end":6},"type":"YANDEX.FIO","value":[]}`),
+			expect:    Entity{},
+			expectErr: true,
+		},
+		{
+			name:      "bad_" + string(TypeYandexDatetime),
+			raw:       []byte(`{"tokens":{"start":5,"end":6},"type":"YANDEX.DATETIME","value":[]}`),
+			expect:    Entity{},
+			expectErr: true,
+		},
+		{
+			name:      "unsupported_type",
+			raw:       []byte(`{"tokens":{"start":5,"end":6},"type":"YANDEX.SOMETHING","value":"hello"}`),
+			expect:    Entity{},
+			expectErr: true,
+		},
 		{
 			name: string(TypeYandexNumber),
 			raw:  []byte(`{"tokens":{"start":5,"end":6},"type":"YANDEX.NUMBER","value":42}`),
@@ -76,7 +113,11 @@ func TestUnmarshalEntity(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			var actual Entity
 			err := json.Unmarshal(tc.raw, &actual)
-			assert.NoError(t, err)
+			if tc.expectErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
 			assert.Equal(t, tc.expect, actual)
 		})
 	}

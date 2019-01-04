@@ -4,14 +4,18 @@ import (
 	"sync"
 )
 
-var _ StoreSeeker = NewMemoryStore()
-
 type MemoryStore struct {
 	sync.Map
 }
 
-func NewMemoryStore(opts ...SeekerOption) *MemoryStore {
-	return new(MemoryStore)
+func NewMemoryStore(opts ...SeekerOption) (*MemoryStore, error) {
+	s := new(MemoryStore)
+	for _, opt := range opts {
+		if err := opt(s); err != nil {
+			return nil, err
+		}
+	}
+	return s, nil
 }
 
 func (s *MemoryStore) Get(id string) (interface{}, error) {
@@ -22,9 +26,6 @@ func (s *MemoryStore) Get(id string) (interface{}, error) {
 }
 
 func (s *MemoryStore) Set(id string, sess interface{}) error {
-	if _, ok := s.Load(id); ok {
-		return ErrAlreadyExists
-	}
 	s.Store(id, sess)
 	return nil
 }
