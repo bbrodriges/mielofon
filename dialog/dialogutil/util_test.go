@@ -1,12 +1,13 @@
-package mielofon
+package dialogutil
 
 import (
 	"bytes"
 	"io"
 	"testing"
 
-	"github.com/bbrodriges/mielofon/dialog"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/bbrodriges/mielofon/dialog"
 )
 
 func TestGetDialogPair(t *testing.T) {

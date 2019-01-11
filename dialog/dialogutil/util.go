@@ -1,4 +1,4 @@
-package mielofon
+package dialogutil
 
 import (
 	"encoding/json"
