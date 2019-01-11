@@ -2,13 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/bbrodriges/mielofon"
 	"net/http"
+
+	"github.com/bbrodriges/mielofon/dialog/dialogutil"
 )
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		input, output, err := mielofon.GetDialogPair(r.Body)
+		input, output, err := dialogutil.GetDialogPair(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return

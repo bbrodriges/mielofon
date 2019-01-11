@@ -4,26 +4,26 @@ var _ StoreSeeker = MockStore{}
 
 type MockStore struct {
 	Store      map[string]interface{}
-	MockGet    func(id string) (interface{}, error)
-	MockSet    func(id string, sess interface{}) error
-	MockDelete func(id string) error
-	MockCount  func() int
+	MockGet    func(st MockStore, id string) (interface{}, error)
+	MockSet    func(st MockStore, id string, sess interface{}) error
+	MockDelete func(st MockStore, id string) error
+	MockCount  func(st MockStore) int
 }
 
 func (s MockStore) Get(id string) (interface{}, error) {
-	return s.MockGet(id)
+	return s.MockGet(s, id)
 }
 
 func (s MockStore) Set(id string, sess interface{}) error {
-	return s.MockSet(id, sess)
+	return s.MockSet(s, id, sess)
 }
 
 func (s MockStore) Delete(id string) error {
-	return s.MockDelete(id)
+	return s.MockDelete(s, id)
 }
 
 func (s MockStore) Count() int {
-	return s.MockCount()
+	return s.MockCount(s)
 }
 
 func (s MockStore) VisitAll(f VisitFunc) {
