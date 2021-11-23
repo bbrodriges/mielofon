@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "Europe/Moscow",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "screen": {}
+    }
+  },
+  "session": {},
+  "request": {
+    "type": "Show.Pull",
+    "show_type": "MORNING"
+  },
+  "version": "1.0"
+}

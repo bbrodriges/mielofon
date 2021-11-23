@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "Europe/Moscow",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "payments": {},
+      "audio_player": {}
+    }
+  },
+  "request": {
+    "type": "AudioPlayer.PlaybackFailed",
+    "error": {
+      "message": "fail details",
+      "type": "MEDIA_ERROR_SERVICE_UNAVAILABLE"
+    }
+  },
+  "session": {
+    "new": true
+  },
+  "version": "1.0"
+}

@@ -1,6 +1,6 @@
 package sounds
 
-// Visit https://tech.yandex.ru/dialogs/alice/doc/sounds/things-docpage/
+// Visit https://yandex.ru/dev/dialogs/alice/doc/sounds/things.html
 // for sound samples.
 // Example:
 //     ...
