@@ -3,40 +3,36 @@ package dialog
 type CardType string
 
 const (
-	TypeBigImageCard  CardType = "BigImage"
-	TypeItemsListCard CardType = "ItemsList"
+	CardBigImage     CardType = "BigImage"
+	CardItemsList    CardType = "ItemsList"
+	CardImageGallery CardType = "ImageGallery"
 )
 
 type OutputCard interface {
-	CardType() CardType
+	Type() CardType
 }
 
-var (
-	_ OutputCard = BigImageCard{}
-	_ OutputCard = ItemsListCard{}
-)
-
 type BigImageCard struct {
-	Type        CardType `json:"type,omitempty"`
+	CardType    CardType `json:"type,omitempty"`
 	ImageID     string   `json:"image_id,omitempty"`
 	Title       string   `json:"title,omitempty"`
 	Description string   `json:"description,omitempty"`
 	Button      *Button  `json:"button,omitempty"`
 }
 
-func (c BigImageCard) CardType() CardType {
-	return TypeBigImageCard
+func (BigImageCard) Type() CardType {
+	return CardBigImage
 }
 
 type ItemsListCard struct {
-	Type   CardType    `json:"type,omitempty"`
-	Header *CardHeader `json:"header,omitempty"`
-	Items  []CardItem  `json:"items,omitempty"`
-	Footer *CardFooter `json:"footer,omitempty"`
+	CardType CardType    `json:"type,omitempty"`
+	Header   *CardHeader `json:"header,omitempty"`
+	Items    []CardItem  `json:"items,omitempty"`
+	Footer   *CardFooter `json:"footer,omitempty"`
 }
 
-func (c ItemsListCard) CardType() CardType {
-	return TypeItemsListCard
+func (ItemsListCard) Type() CardType {
+	return CardItemsList
 }
 
 type CardHeader struct {
@@ -53,4 +49,19 @@ type CardItem struct {
 	Title       string  `json:"title,omitempty"`
 	Description string  `json:"description,omitempty"`
 	Button      *Button `json:"button,omitempty"`
+}
+
+type ImageGalleryCard struct {
+	CardType CardType           `json:"type,omitempty"`
+	Items    []ImageGalleryItem `json:"items,omitempty"`
+}
+
+func (ImageGalleryCard) Type() CardType {
+	return CardImageGallery
+}
+
+type ImageGalleryItem struct {
+	ImageID string  `json:"image_id,omitempty"`
+	Title   string  `json:"title,omitempty"`
+	Button  *Button `json:"button,omitempty"`
 }

@@ -2,29 +2,87 @@ package dialog
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 type RequestType string
 
 const (
-	SimpleUtterance RequestType = "SimpleUtterance"
-	ButtonPressed   RequestType = "ButtonPressed"
+	TypeSimpleUtterance RequestType = "SimpleUtterance"
+	TypeButtonPressed   RequestType = "ButtonPressed"
+
+	TypeAudioPlayerPlaybackStarted        RequestType = "AudioPlayer.PlaybackStarted"
+	TypeAudioPlayerPlaybackFinished       RequestType = "AudioPlayer.PlaybackFinished"
+	TypeAudioPlayerPlaybackNearlyFinished RequestType = "AudioPlayer.PlaybackNearlyFinished"
+	TypeAudioPlayerPlaybackStopped        RequestType = "AudioPlayer.PlaybackStopped"
+	TypeAudioPlayerPlaybackFailed         RequestType = "AudioPlayer.PlaybackFailed"
+
+	TypePurchaseConfirmation RequestType = "Purchase.Confirmation"
+
+	TypeShowPull RequestType = "Show.Pull"
 )
 
-type Request struct {
-	Command           string          `json:"command,omitempty"`
-	OriginalUtterance string          `json:"original_utterance,omitempty"`
-	Type              RequestType     `json:"type,omitempty"`
-	Markup            Markup          `json:"markup,omitempty"`
-	Payload           json.RawMessage `json:"payload,omitempty"`
-	Nlu               Nlu             `json:"nlu,omitempty"`
+// Request represents abstract request field of input
+type Request interface {
+	// Type returns type of input request
+	Type() RequestType
 }
 
-type Markup struct {
+type RequestMarkup struct {
 	DangerousContext bool `json:"dangerous_context,omitempty"`
 }
 
-type Nlu struct {
-	Tokens   []string `json:"tokens,omitempty"`
-	Entities []Entity `json:"entities,omitempty"`
+// unmarshalRequest unmarshals request object from JSON
+func unmarshalRequest(b json.RawMessage) (Request, error) {
+	var raw = struct {
+		Type RequestType `json:"type"`
+	}{}
+
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return nil, fmt.Errorf("cannot unmarshal to intermediate struct: %w", err)
+	}
+
+	switch raw.Type {
+	case TypeSimpleUtterance:
+		var req SimpleUtteranceRequest
+		if err := json.Unmarshal(b, &req); err != nil {
+			return nil, err
+		}
+		return req, nil
+	case TypeButtonPressed:
+		var req ButtonPressedRequest
+		if err := json.Unmarshal(b, &req); err != nil {
+			return nil, err
+		}
+		return req, nil
+	case TypeShowPull:
+		var req ShowPullRequest
+		if err := json.Unmarshal(b, &req); err != nil {
+			return nil, err
+		}
+		return req, nil
+	case TypePurchaseConfirmation:
+		var req PurchaseConfirmationRequest
+		if err := json.Unmarshal(b, &req); err != nil {
+			return nil, err
+		}
+		return req, nil
+	case TypeAudioPlayerPlaybackStarted,
+		TypeAudioPlayerPlaybackStopped,
+		TypeAudioPlayerPlaybackNearlyFinished,
+		TypeAudioPlayerPlaybackFinished:
+		var req AudioPlayerRequest
+		if err := json.Unmarshal(b, &req); err != nil {
+			return nil, err
+		}
+		return req, nil
+	case TypeAudioPlayerPlaybackFailed:
+		var req AudioPlayerErrorRequest
+		if err := json.Unmarshal(b, &req); err != nil {
+			return nil, err
+		}
+		return req, nil
+	default:
+		return nil, fmt.Errorf("unsupported type: %s", raw.Type)
+	}
 }

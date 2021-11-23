@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/bbrodriges/mielofon/dialog"
+	"github.com/bbrodriges/mielofon/v2/dialog"
 )
 
 func TestGetDialogPair(t *testing.T) {
@@ -20,15 +20,14 @@ func TestGetDialogPair(t *testing.T) {
 			Locale:   "ru-RU",
 			Timezone: "UTC",
 			ClientID: "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
-			Interfaces: dialog.Interfaces{
+			Interfaces: dialog.Capabilities{
 				Screen: []byte(`{}`),
 			},
 		},
-		Request: dialog.Request{
+		Request: dialog.SimpleUtteranceRequest{
 			Command:           "hello, world",
 			OriginalUtterance: "hello, world",
-			Type:              dialog.SimpleUtterance,
-			Nlu: dialog.Nlu{
+			Nlu: dialog.SimpleUtteranceNlu{
 				Tokens: []string{"hello", "world"},
 			},
 		},
@@ -44,12 +43,6 @@ func TestGetDialogPair(t *testing.T) {
 
 	expectOutput := &dialog.Output{
 		Version: "1.0",
-		Session: dialog.Session{
-			MessageID: 1,
-			SessionID: "18021ad-ae9b2d24-c86e8926-6b64f1a",
-			SkillID:   "01b43d41-806b-4b95-8d19-87ba2a8edefa",
-			UserID:    "0A5BDE6A080BD274CC5E4825ED5F384FD5FF94629DC025C013EA793DDCD62EE2",
-		},
 	}
 
 	input, output, err := GetDialogPair(raw)
@@ -81,15 +74,14 @@ func TestReadInput(t *testing.T) {
 					Locale:   "ru-RU",
 					Timezone: "UTC",
 					ClientID: "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
-					Interfaces: dialog.Interfaces{
+					Interfaces: dialog.Capabilities{
 						Screen: []byte(`{}`),
 					},
 				},
-				Request: dialog.Request{
+				Request: dialog.SimpleUtteranceRequest{
 					Command:           "hello, world",
 					OriginalUtterance: "hello, world",
-					Type:              dialog.SimpleUtterance,
-					Nlu: dialog.Nlu{
+					Nlu: dialog.SimpleUtteranceNlu{
 						Tokens: []string{"hello", "world"},
 					},
 				},
@@ -145,21 +137,17 @@ func TestOutputFromInput(t *testing.T) {
 			"basic",
 			&dialog.Input{
 				Version: "1.0",
-				Session: dialog.Session{
-					MessageID: 1,
-					SessionID: "18021ad-ae9b2d24-c86e8926-6b64f1a",
-					SkillID:   "01b43d41-806b-4b95-8d19-87ba2a8edefa",
-					UserID:    "0A5BDE6A080BD274CC5E4825ED5F384FD5FF94629DC025C013EA793DDCD62EE2",
+				State: dialog.State{
+					Session:     dialog.StateValue{Value: 42},
+					User:        dialog.StateValue{Value: 27},
+					Application: dialog.StateValue{Value: 101},
 				},
 			},
 			&dialog.Output{
-				Version: "1.0",
-				Session: dialog.Session{
-					MessageID: 1,
-					SessionID: "18021ad-ae9b2d24-c86e8926-6b64f1a",
-					SkillID:   "01b43d41-806b-4b95-8d19-87ba2a8edefa",
-					UserID:    "0A5BDE6A080BD274CC5E4825ED5F384FD5FF94629DC025C013EA793DDCD62EE2",
-				},
+				Version:          "1.0",
+				SessionState:     dialog.StateValue{Value: 42},
+				UserStateUpdate:  dialog.StateValue{Value: 27},
+				ApplicationState: dialog.StateValue{Value: 101},
 			},
 		},
 	}

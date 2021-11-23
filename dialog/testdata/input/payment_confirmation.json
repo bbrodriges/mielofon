@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "Europe/Moscow",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "payments": {}
+    }
+  },
+  "request": {
+    "type": "Purchase.Confirmation",
+    "purchase_request_id": "d432de19be8347d09f656d9fe966e2f9",
+    "purchase_token": "token_value",
+    "order_id": "eeb59d64-9e6a-11ea-bb37-0242ac130002",
+    "purchase_timestamp": 1590399311,
+    "purchase_payload": {"value": "payload"},
+    "signed_data": "purchase_request_id=id_value&purchase_token=token_value&order_id=id_value",
+    "signature": "cHVyY2hhc2VfcmVxdWVzdF9pZD1pZF92YWx1ZSZwdXJjaGFzZV90b2tlbj10b2tlbl92YWx1ZSZvcmRlcl9pZD1pZF92YWx1ZQ=="
+  },
+  "session": {
+    "new": true
+  },
+  "version": "1.0"
+}

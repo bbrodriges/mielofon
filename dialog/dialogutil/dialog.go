@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/bbrodriges/mielofon/dialog"
+	"github.com/bbrodriges/mielofon/v2/dialog"
 )
 
 // GetDialogPair is a convenient wrapper around ReadInput
@@ -33,11 +33,14 @@ func ReadInput(r io.Reader) (*dialog.Input, error) {
 func OutputFromInput(input *dialog.Input) *dialog.Output {
 	return &dialog.Output{
 		Version: input.Version,
-		Session: dialog.Session{
-			MessageID: input.Session.MessageID,
-			SessionID: input.Session.SessionID,
-			UserID:    input.Session.UserID,
-			SkillID:   input.Session.SkillID,
+		SessionState: dialog.StateValue{
+			Value: input.State.Session.Value,
+		},
+		UserStateUpdate: dialog.StateValue{
+			Value: input.State.User.Value,
+		},
+		ApplicationState: dialog.StateValue{
+			Value: input.State.Application.Value,
 		},
 	}
 }

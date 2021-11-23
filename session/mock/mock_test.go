@@ -1,29 +1,30 @@
-package session
+package mock
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"sort"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestMockStoreGet(t *testing.T) {
+func TestStoreGet(t *testing.T) {
 	called := false
-	ms := MockStore{
-		MockGet: func(_ MockStore, _ string) (interface{}, error) {
+	ms := Store{
+		MockGet: func(_ Store, _ string) (interface{}, error) {
 			called = true
-			return NopSession{}, nil
+			return "shimba", nil
 		},
 	}
 	sess, err := ms.Get("ololo")
 	assert.Nil(t, err)
-	assert.Equal(t, NopSession{}, sess)
+	assert.Equal(t, "shimba", sess)
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		MockGet: func(_ MockStore, _ string) (interface{}, error) {
+	ms = Store{
+		MockGet: func(_ Store, _ string) (interface{}, error) {
 			called = true
 			return nil, errors.New("unknown error")
 		},
@@ -34,64 +35,64 @@ func TestMockStoreGet(t *testing.T) {
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		Store: map[string]interface{}{"ololo": NopSession{}},
-		MockGet: func(s MockStore, id string) (interface{}, error) {
+	ms = Store{
+		Values: map[string]interface{}{"ololo": "shimba"},
+		MockGet: func(s Store, id string) (interface{}, error) {
 			called = true
-			if sess, ok := s.Store[id]; ok {
+			if sess, ok := s.Values[id]; ok {
 				return sess, nil
 			}
 			return nil, errors.New("not found")
 		},
 	}
 	sess, err = ms.Get("ololo")
-	assert.Equal(t, NopSession{}, sess)
+	assert.Equal(t, "shimba", sess)
 	assert.NoError(t, err)
 	assert.True(t, called)
 }
 
-func TestMockStoreSet(t *testing.T) {
+func TestStoreSet(t *testing.T) {
 	called := false
-	ms := MockStore{
-		MockSet: func(_ MockStore, _ string, _ interface{}) error {
+	ms := Store{
+		MockSet: func(_ Store, _ string, _ interface{}) error {
 			called = true
 			return nil
 		},
 	}
-	err := ms.Set("ololo", NopSession{})
+	err := ms.Set("ololo", "shimba")
 	assert.Nil(t, err)
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		MockSet: func(_ MockStore, _ string, _ interface{}) error {
+	ms = Store{
+		MockSet: func(_ Store, _ string, _ interface{}) error {
 			called = true
 			return errors.New("unknown error")
 		},
 	}
-	err = ms.Set("ololo", NopSession{})
+	err = ms.Set("ololo", "shimba")
 	assert.Error(t, err)
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		Store: make(map[string]interface{}),
-		MockSet: func(s MockStore, id string, sess interface{}) error {
+	ms = Store{
+		Values: make(map[string]interface{}),
+		MockSet: func(s Store, id string, sess interface{}) error {
 			called = true
-			s.Store[id] = sess
+			s.Values[id] = sess
 			return nil
 		},
 	}
-	err = ms.Set("ololo", NopSession{})
+	err = ms.Set("ololo", "shimba")
 	assert.NoError(t, err)
-	assert.Equal(t, map[string]interface{}{"ololo": NopSession{}}, ms.Store)
+	assert.Equal(t, map[string]interface{}{"ololo": "shimba"}, ms.Values)
 	assert.True(t, called)
 }
 
-func TestMockStoreDelete(t *testing.T) {
+func TestStoreDelete(t *testing.T) {
 	called := false
-	ms := MockStore{
-		MockDelete: func(_ MockStore, _ string) error {
+	ms := Store{
+		MockDelete: func(_ Store, _ string) error {
 			called = true
 			return nil
 		},
@@ -101,8 +102,8 @@ func TestMockStoreDelete(t *testing.T) {
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		MockDelete: func(_ MockStore, _ string) error {
+	ms = Store{
+		MockDelete: func(_ Store, _ string) error {
 			called = true
 			return errors.New("unknown error")
 		},
@@ -112,26 +113,26 @@ func TestMockStoreDelete(t *testing.T) {
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		Store: map[string]interface{}{"ololo": NopSession{}},
-		MockDelete: func(s MockStore, id string) error {
+	ms = Store{
+		Values: map[string]interface{}{"ololo": "shimba"},
+		MockDelete: func(s Store, id string) error {
 			called = true
-			delete(s.Store, id)
+			delete(s.Values, id)
 			return nil
 		},
 	}
 	err = ms.Delete("ololo")
 	assert.Nil(t, err)
 	assert.True(t, called)
-	assert.Len(t, ms.Store, 0)
+	assert.Len(t, ms.Values, 0)
 }
 
-func TestMockStoreCount(t *testing.T) {
+func TestStoreCount(t *testing.T) {
 	expectCount := rand.Intn(1000000)
 
 	called := false
-	ms := MockStore{
-		MockCount: func(_ MockStore) int {
+	ms := Store{
+		MockCount: func(_ Store) int {
 			called = true
 			return expectCount
 		},
@@ -141,11 +142,11 @@ func TestMockStoreCount(t *testing.T) {
 	assert.True(t, called)
 
 	called = false
-	ms = MockStore{
-		Store: map[string]interface{}{"ololo": NopSession{}},
-		MockCount: func(s MockStore) int {
+	ms = Store{
+		Values: map[string]interface{}{"ololo": "shimba"},
+		MockCount: func(s Store) int {
 			called = true
-			return len(s.Store)
+			return len(s.Values)
 		},
 	}
 	count = ms.Count()
@@ -153,16 +154,16 @@ func TestMockStoreCount(t *testing.T) {
 	assert.True(t, called)
 }
 
-func TestMockStoreVisitAll(t *testing.T) {
-	ms := MockStore{
-		Store: map[string]interface{}{
-			"ololo":   NopSession{},
-			"trololo": NopSession{},
+func TestStoreVisitAll(t *testing.T) {
+	ms := Store{
+		Values: map[string]interface{}{
+			"ololo":   "shimba",
+			"trololo": "shimba",
 		},
 	}
 
 	var expectedIds []string
-	for id := range ms.Store {
+	for id := range ms.Values {
 		expectedIds = append(expectedIds, id)
 	}
 
